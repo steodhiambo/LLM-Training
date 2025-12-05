@@ -1,0 +1,391 @@
+============================================================================
+E-COMMERCE ANALYTICS & CUSTOMER INTELLIGENCE PLATFORM
+DATA DICTIONARY
+============================================================================
+
+TABLE: DIM_TIME
+Description: Time dimension table containing date/time hierarchies for analysis
+Purpose: Enable time-based analysis with multiple calendar and fiscal hierarchies
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+time_key                       | INT              |        | NOT NULL | Surrogate key for the dimension (Primary Key)
+date_value                     | DATE             |        | NOT NULL | Actual calendar date (Business Key)
+full_date_description          | VARCHAR          | 50     | NOT NULL | Full date description (e.g., "January 1, 2025")
+day_number_in_week             | INT              |        | NOT NULL | Day number in the week (1-7)
+day_name_of_week               | VARCHAR          | 10     | NOT NULL | Name of the day (e.g., Monday, Tuesday)
+day_number_in_month            | INT              |        | NOT NULL | Day number in the month (1-31)
+day_number_in_year             | INT              |        | NOT NULL | Day number in the year (1-366)
+calendar_week_number_in_year   | INT              |        | NOT NULL | Week number in the calendar year
+calendar_month_number_in_year  | INT              |        | NOT NULL | Month number in the calendar year (1-12)
+calendar_month_name            | VARCHAR          | 10     | NOT NULL | Name of the calendar month (e.g., January)
+calendar_year                  | INT              |        | NOT NULL | Calendar year (e.g., 2025)
+calendar_half_year             | VARCHAR          | 10     | NOT NULL | Calendar half-year (H1, H2)
+calendar_quarter               | VARCHAR          | 10     | NOT NULL | Calendar quarter (Q1, Q2, Q3, Q4)
+fiscal_week_number_in_year     | INT              |        | NULL     | Week number in the fiscal year
+fiscal_month_number_in_year    | INT              |        | NULL     | Month number in the fiscal year
+fiscal_month_name              | VARCHAR          | 10     | NULL     | Name of the fiscal month
+fiscal_year                    | INT              |        | NULL     | Fiscal year (e.g., 2025)
+fiscal_half_year               | VARCHAR          | 10     | NULL     | Fiscal half-year (FH1, FH2)
+fiscal_quarter                 | VARCHAR          | 10     | NULL     | Fiscal quarter (FQ1, FQ2, FQ3, FQ4)
+holiday_flag                   | BOOLEAN          |        | NULL     | Indicates if the date is a holiday
+weekend_flag                   | BOOLEAN          |        | NULL     | Indicates if the date is a weekend
+day_of_week_in_month           | INT              |        | NULL     | Occurrence of day of week in month (1st Monday, 2nd Monday, etc.)
+day_of_week_in_year            | INT              |        | NULL     | Day of week occurrence in year
+day_of_year                    | INT              |        | NULL     | Day number in the year (1-366)
+week_ending_date               | DATE             |        | NULL     | Date of the week ending
+month_ending_date              | DATE             |        | NULL     | Date of the month ending
+quarter_ending_date            | DATE             |        | NULL     | Date of the quarter ending
+year_ending_date               | DATE             |        | NULL     | Date of the year ending
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+
+
+TABLE: DIM_GEOGRAPHY
+Description: Geographic dimension table containing location information
+Purpose: Enable geographic analysis and location-based reporting
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+geography_key                  | INT              |        | NOT NULL | Surrogate key for the dimension (Primary Key)
+country_code                   | CHAR             | 3      | NOT NULL | ISO 3166-1 alpha-3 country code (e.g., USA, CAN, GBR)
+country_name                   | VARCHAR          | 100    | NOT NULL | Full country name (e.g., United States, Canada)
+region_code                    | VARCHAR          | 10     | NOT NULL | Region code (e.g., US-EAST, CA-ONT)
+region_name                    | VARCHAR          | 100    | NOT NULL | Full region name (e.g., Northeast, Ontario)
+state_province_code            | VARCHAR          | 10     | NULL     | State/province code (e.g., CA, NY, ON)
+state_province_name            | VARCHAR          | 100    | NULL     | Full state/province name (e.g., California, New York)
+city_name                      | VARCHAR          | 100    | NULL     | City name
+postal_code                    | VARCHAR          | 20     | NULL     | Postal/ZIP code
+latitude                       | DECIMAL          | 10,8   | NULL     | Latitude coordinate
+longitude                      | DECIMAL          | 11,8   | NULL     | Longitude coordinate
+timezone                       | VARCHAR          | 50     | NULL     | Timezone identifier (e.g., America/New_York)
+country_code_iso2              | CHAR             | 2      | NULL     | ISO 3166-1 alpha-2 country code (e.g., US, CA, GB)
+continent_code                 | VARCHAR          | 5      | NULL     | Continent code (e.g., NA, EU, AS)
+continent_name                 | VARCHAR          | 50     | NULL     | Continent name (e.g., North America)
+market_classification          | VARCHAR          | 20     | NULL     | Market classification (Premium, Standard, Economy)
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+is_active                      | BOOLEAN          |        | NULL     | Flag indicating if geography is active for use
+
+
+TABLE: DIM_CUSTOMER
+Description: Customer dimension table containing customer demographics and behavior
+Purpose: Enable customer-based analysis and segmentation
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+customer_key                   | INT              |        | NOT NULL | Surrogate key for the dimension (Primary Key)
+customer_id                    | INT              |        | NOT NULL | Business key - unique customer identifier
+customer_name                  | VARCHAR          | 100    | NOT NULL | Full customer name
+customer_segment               | VARCHAR          | 50     | NULL     | Customer segment (Premium, Gold, Silver, Bronze)
+gender                         | CHAR             | 1      | NULL     | Customer gender (M, F, O)
+date_of_birth                  | DATE             |        | NULL     | Customer date of birth
+age_group                      | VARCHAR          | 20     | NULL     | Age group category (Under 18, 18-25, 26-35, etc.)
+marital_status                 | VARCHAR          | 20     | NULL     | Marital status (Single, Married, Divorced, Widowed)
+education_level                | VARCHAR          | 50     | NULL     | Education level (High School, Bachelor, Master, PhD)
+occupation                     | VARCHAR          | 100    | NULL     | Customer occupation
+annual_income                  | DECIMAL          | 12,2   | NULL     | Annual income in USD
+loyalty_member                 | BOOLEAN          |        | NULL     | Flag indicating if customer is a loyalty member
+loyalty_tier                   | VARCHAR          | 20     | NULL     | Loyalty tier (Basic, Silver, Gold, Platinum)
+registration_date              | DATE             |        | NOT NULL | Date when customer registered
+registration_channel           | VARCHAR          | 50     | NULL     | Channel through which customer registered (Email, Web, Store)
+last_activity_date             | DATE             |        | NULL     | Date of last customer activity
+total_lifetime_value           | DECIMAL          | 12,2   | NULL     | Total customer lifetime value to-date
+total_orders_count             | INT              |        | NULL     | Total number of orders placed by customer
+average_order_value            | DECIMAL          | 10,2   | NULL     | Average order value for the customer
+preferred_communication_channel| VARCHAR          | 50     | NULL     | Preferred communication method (Email, SMS, Phone)
+preferred_store_location       | VARCHAR          | 100    | NULL     | Preferred store location
+marketing_opt_in               | BOOLEAN          |        | NULL     | Flag indicating if customer opted into marketing communications
+geography_key                  | INT              |        | NOT NULL | Foreign key to dim_geography
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+is_active                      | BOOLEAN          |        | NULL     | Flag indicating if customer record is active
+
+
+TABLE: DIM_PRODUCT
+Description: Product dimension table containing detailed product information
+Purpose: Enable product-based analysis and categorization
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+product_key                    | INT              |        | NOT NULL | Surrogate key for the dimension (Primary Key)
+product_id                     | INT              |        | NOT NULL | Business key - unique product identifier
+product_name                   | VARCHAR          | 200    | NOT NULL | Product name
+product_code                   | VARCHAR          | 50     | NOT NULL | Product code/SKU
+product_category               | VARCHAR          | 100    | NOT NULL | Product category (e.g., Electronics, Clothing, Home)
+product_subcategory            | VARCHAR          | 100    | NULL     | Product subcategory (e.g., Mobile Phones, Shirts, Kitchen)
+product_brand                  | VARCHAR          | 100    | NULL     | Product brand name
+product_line                   | VARCHAR          | 100    | NULL     | Product line (e.g., Premium, Standard, Economy)
+product_size                   | VARCHAR          | 50     | NULL     | Product size (e.g., Small, Medium, Large)
+product_color                  | VARCHAR          | 50     | NULL     | Product color
+product_material               | VARCHAR          | 100    | NULL     | Product material
+product_weight                 | DECIMAL          | 10,3   | NULL     | Product weight in pounds
+product_dimensions             | VARCHAR          | 50     | NULL     | Product dimensions (Length x Width x Height)
+base_price                     | DECIMAL          | 10,2   | NOT NULL | Base price of the product
+cost_price                     | DECIMAL          | 10,2   | NULL     | Cost price of the product
+product_status                 | VARCHAR          | 20     | NULL     | Product status (Active, Discontinued, Out of Stock)
+product_description            | TEXT             |        | NULL     | Detailed product description
+product_image_url              | VARCHAR          | 500    | NULL     | URL to product image
+supplier_id                    | INT              |        | NULL     | ID of the supplier
+supplier_name                  | VARCHAR          | 100    | NULL     | Name of the supplier
+manufacturing_date             | DATE             |        | NULL     | Date when product was manufactured
+expiry_date                    | DATE             |        | NULL     | Date when product expires
+weight_class                   | VARCHAR          | 20     | NULL     | Weight classification (Light, Medium, Heavy)
+category_ranking               | INT              |        | NULL     | Ranking of product within category
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+is_active                      | BOOLEAN          |        | NULL     | Flag indicating if product is active
+
+
+TABLE: DIM_MARKETING_CHANNEL
+Description: Marketing channel dimension table containing channel information
+Purpose: Enable marketing attribution and channel performance analysis
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+marketing_channel_key          | INT              |        | NOT NULL | Surrogate key for the dimension (Primary Key)
+channel_id                     | INT              |        | NOT NULL | Business key - unique channel identifier
+channel_name                   | VARCHAR          | 100    | NOT NULL | Name of the marketing channel
+channel_type                   | VARCHAR          | 50     | NOT NULL | Type of channel (Direct, Organic, Paid, Social, Email, Affiliates)
+channel_category               | VARCHAR          | 50     | NULL     | Category of channel (Acquisition, Retention, Conversion)
+attribution_model              | VARCHAR          | 50     | NULL     | Attribution model used (Last Click, First Click, Linear, Time Decay)
+campaign_type                  | VARCHAR          | 50     | NULL     | Type of campaign (Awareness, Consideration, Conversion)
+cost_per_click                 | DECIMAL          | 10,4   | NULL     | Cost per click for paid channels
+channel_status                 | VARCHAR          | 20     | NULL     | Status of the channel (Active, Inactive)
+marketing_region               | VARCHAR          | 100    | NULL     | Geographic region for marketing campaign
+marketing_budget               | DECIMAL          | 12,2   | NULL     | Budget allocated to the channel
+target_audience                | VARCHAR          | 200    | NULL     | Target audience for the channel
+conversion_goal                | VARCHAR          | 100    | NULL     | Conversion goal for the channel
+performance_metrics            | TEXT             |        | NULL     | JSON or text containing performance metrics
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+is_active                      | BOOLEAN          |        | NULL     | Flag indicating if channel is active
+
+
+TABLE: FACT_SALES_TRANSACTIONS
+Description: Core sales transaction fact table containing sales and financial data
+Purpose: Enable sales analysis, revenue tracking, and customer purchase behavior analysis
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+sales_transaction_key          | INT              |        | NOT NULL | Surrogate key for the fact (Primary Key)
+transaction_id                 | VARCHAR          | 50     | NOT NULL | Unique transaction identifier
+customer_key                   | INT              |        | NOT NULL | Foreign key to dim_customer
+product_key                    | INT              |        | NOT NULL | Foreign key to dim_product
+time_key                       | INT              |        | NOT NULL | Foreign key to dim_time
+geography_key                  | INT              |        | NOT NULL | Foreign key to dim_geography
+marketing_channel_key          | INT              |        | NULL     | Foreign key to dim_marketing_channel
+transaction_date               | DATE             |        | NOT NULL | Date of the transaction
+transaction_time               | TIME             |        | NOT NULL | Time of the transaction
+transaction_type               | VARCHAR          | 50     | NOT NULL | Type of transaction (Purchase, Return, Refund, Exchange)
+order_id                       | VARCHAR          | 50     | NOT NULL | Order identifier
+order_item_id                  | VARCHAR          | 50     | NOT NULL | Order item identifier
+session_id                     | VARCHAR          | 100    | NULL     | Web session ID for online transactions
+quantity_sold                  | INT              |        | NOT NULL | Quantity of products sold
+unit_price                     | DECIMAL          | 10,2   | NOT NULL | Price per unit at time of transaction
+unit_cost                      | DECIMAL          | 10,2   | NULL     | Cost per unit
+total_revenue                  | DECIMAL          | 12,2   | NOT NULL | Total revenue (quantity_sold * unit_price)
+total_cost                     | DECIMAL          | 12,2   | NULL     | Total cost (quantity_sold * unit_cost)
+total_profit                   | DECIMAL          | 12,2   | NULL     | Total profit (total_revenue - total_cost)
+discount_amount                | DECIMAL          | 10,2   | NULL     | Discount amount applied
+tax_amount                     | DECIMAL          | 10,2   | NULL     | Tax amount
+shipping_cost                  | DECIMAL          | 10,2   | NULL     | Shipping cost
+gross_margin                   | DECIMAL          | 12,2   | NULL     | Gross margin percentage
+customer_satisfaction_score    | DECIMAL          | 3,2    | NULL     | Customer satisfaction score (0.00 to 5.00)
+review_rating                  | INT              |        | NULL     | Product review rating (1-5)
+review_text                    | TEXT             |        | NULL     | Customer review text
+order_processing_time_minutes  | INT              |        | NULL     | Time in minutes to process the order
+shipping_time_days             | INT              |        | NULL     | Time in days to ship the order
+delivery_status                | VARCHAR          | 20     | NULL     | Status of delivery (Delivered, Shipped, Pending, Cancelled)
+payment_method                 | VARCHAR          | 50     | NULL     | Payment method used (Credit Card, Debit Card, PayPal, etc.)
+payment_status                 | VARCHAR          | 20     | NULL     | Status of payment (Paid, Pending, Failed, Refunded)
+is_return                      | BOOLEAN          |        | NULL     | Flag indicating if this is a return transaction
+is_express_delivery            | BOOLEAN          |        | NULL     | Flag indicating if express delivery was used
+is_gift                        | BOOLEAN          |        | NULL     | Flag indicating if item was marked as gift
+is_first_time_purchase         | BOOLEAN          |        | NULL     | Flag indicating if this is customer's first purchase
+is_repeat_customer             | BOOLEAN          |        | NULL     | Flag indicating if customer has made previous purchases
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+
+
+TABLE: FACT_WEB_EVENTS
+Description: Web user behavior and engagement fact table
+Purpose: Enable web analytics, user behavior analysis, and conversion tracking
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+web_event_key                  | INT              |        | NOT NULL | Surrogate key for the fact (Primary Key)
+customer_key                   | INT              |        | NULL     | Foreign key to dim_customer (nullable for anonymous users)
+time_key                       | INT              |        | NOT NULL | Foreign key to dim_time
+product_key                    | INT              |        | NULL     | Foreign key to dim_product (nullable for page views without products)
+marketing_channel_key          | INT              |        | NULL     | Foreign key to dim_marketing_channel
+session_id                     | VARCHAR          | 100    | NOT NULL | Web session identifier
+user_id                        | VARCHAR          | 100    | NULL     | User identifier (if available)
+event_date                     | DATE             |        | NOT NULL | Date of the event
+event_time                     | TIME             |        | NOT NULL | Time of the event
+event_type                     | VARCHAR          | 100    | NOT NULL | Type of event (page_view, add_to_cart, checkout_start, purchase)
+page_url                       | VARCHAR          | 500    | NULL     | URL of the page where event occurred
+page_title                     | VARCHAR          | 200    | NULL     | Title of the page
+referrer_url                   | VARCHAR          | 500    | NULL     | Referring URL
+utm_source                     | VARCHAR          | 100    | NULL     | UTM source parameter
+utm_medium                     | VARCHAR          | 100    | NULL     | UTM medium parameter
+utm_campaign                   | VARCHAR          | 100    | NULL     | UTM campaign parameter
+utm_term                       | VARCHAR          | 100    | NULL     | UTM term parameter
+utm_content                    | VARCHAR          | 100    | NULL     | UTM content parameter
+device_type                    | VARCHAR          | 50     | NULL     | Type of device (Desktop, Mobile, Tablet)
+browser_name                   | VARCHAR          | 50     | NULL     | Name of the browser (Chrome, Firefox, Safari)
+operating_system               | VARCHAR          | 50     | NULL     | Operating system (Windows, macOS, iOS, Android)
+screen_resolution              | VARCHAR          | 20     | NULL     | Screen resolution (e.g., 1920x1080)
+ip_address                     | VARCHAR          | 45     | NULL     | IP address of the visitor
+user_agent                     | TEXT             |        | NULL     | Full user agent string
+page_view_duration_seconds     | INT              |        | NULL     | Duration of page view in seconds
+scroll_depth_percent           | INT              |        | NULL     | Scroll depth as percentage (0-100)
+exit_page_flag                 | BOOLEAN          |        | NULL     | Flag indicating if this was an exit page
+bounce_flag                    | BOOLEAN          |        | NULL     | Flag indicating if this was a bounce (single page visit)
+internal_search_terms          | VARCHAR          | 200    | NULL     | Search terms used on the site
+video_engagement_seconds       | INT              |        | NULL     | Video engagement time in seconds
+conversion_event               | BOOLEAN          |        | NULL     | Flag indicating if this was a conversion event
+conversion_value               | DECIMAL          | 12,2   | NULL     | Value of the conversion
+goal_completion                | VARCHAR          | 100    | NULL     | Goal that was completed
+transaction_id                 | VARCHAR          | 50     | NULL     | Transaction ID (links to fact_sales_transactions)
+session_duration_seconds       | INT              |        | NULL     | Total session duration in seconds
+pages_per_session              | INT              |        | NULL     | Number of pages viewed in the session
+events_per_session             | INT              |        | NULL     | Number of events in the session
+session_start_time             | TIME             |        | NULL     | Time when session started
+session_end_time               | TIME             |        | NULL     | Time when session ended
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+
+
+TABLE: FACT_CUSTOMER_INTERACTIONS
+Description: Customer touchpoint and interaction fact table
+Purpose: Enable customer service analysis, interaction tracking, and support metrics
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+interaction_key                | INT              |        | NOT NULL | Surrogate key for the fact (Primary Key)
+customer_key                   | INT              |        | NOT NULL | Foreign key to dim_customer
+time_key                       | INT              |        | NOT NULL | Foreign key to dim_time
+product_key                    | INT              |        | NULL     | Foreign key to dim_product (for product-specific interactions)
+marketing_channel_key          | INT              |        | NULL     | Foreign key to dim_marketing_channel
+interaction_date               | DATE             |        | NOT NULL | Date of the interaction
+interaction_time               | TIME             |        | NOT NULL | Time of the interaction
+interaction_channel            | VARCHAR          | 50     | NOT NULL | Channel of interaction (Email, Phone, Chat, Social Media, In-Store)
+interaction_type               | VARCHAR          | 100    | NOT NULL | Type of interaction (Support, Sales, Inquiry, Complaint, Feedback)
+interaction_purpose            | VARCHAR          | 200    | NULL     | Purpose of the interaction
+interaction_status             | VARCHAR          | 50     | NULL     | Current status of interaction (Open, In Progress, Resolved, Closed)
+priority_level                 | VARCHAR          | 20     | NULL     | Priority level (Low, Medium, High, Critical)
+first_response_time_minutes    | INT              |        | NULL     | Time in minutes for first response
+resolution_time_minutes        | INT              |        | NULL     | Total time in minutes to resolve
+satisfaction_score             | DECIMAL          | 3,2    | NULL     | Satisfaction score (0.00 to 5.00)
+resolution_status              | VARCHAR          | 50     | NULL     | Resolution status (Resolved, Escalated, Pending, Unresolved)
+interaction_subject            | VARCHAR          | 200    | NULL     | Subject of the interaction
+interaction_details            | TEXT             |        | NULL     | Detailed description of the interaction
+resolution_notes               | TEXT             |        | NULL     | Notes on how the interaction was resolved
+agent_id                       | VARCHAR          | 50     | NULL     | ID of the customer service agent
+agent_name                     | VARCHAR          | 100    | NULL     | Name of the customer service agent
+department                     | VARCHAR          | 100    | NULL     | Department handling the interaction
+revenue_impact                 | DECIMAL          | 12,2   | NULL     | Financial impact on revenue (positive for upsells, negative for support costs)
+sentiment_score                | DECIMAL          | 3,2    | NULL     | Sentiment analysis score (-1.00 to 1.00)
+sentiment_category             | VARCHAR          | 20     | NULL     | Sentiment category (Positive, Negative, Neutral)
+follow_up_required             | BOOLEAN          |        | NULL     | Flag indicating if follow-up is required
+follow_up_date                 | DATE             |        | NULL     | Date when follow-up is scheduled
+created_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was created
+updated_at                     | TIMESTAMP        |        | NULL     | Timestamp when record was last updated
+
+
+TABLE: STG_SALES_TRANSACTIONS
+Description: Staging table for raw sales transaction data during ETL process
+Purpose: Temporary storage for data validation and cleansing before loading to fact table
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+staging_id                     | INT              |        | NOT NULL | Surrogate key for staging (Primary Key)
+source_transaction_id          | VARCHAR          | 50     | NOT NULL | Transaction ID from source system
+source_customer_id             | VARCHAR          | 50     | NULL     | Customer ID from source system (before mapping)
+source_product_code            | VARCHAR          | 50     | NULL     | Product code from source system (before mapping)
+transaction_date_str           | VARCHAR          | 20     | NULL     | Transaction date as string (before conversion to DATE)
+transaction_time_str           | VARCHAR          | 20     | NULL     | Transaction time as string (before conversion to TIME)
+transaction_type               | VARCHAR          | 50     | NULL     | Type of transaction from source
+order_id                       | VARCHAR          | 50     | NULL     | Order ID from source
+order_item_id                  | VARCHAR          | 50     | NULL     | Order item ID from source
+quantity_sold_str              | VARCHAR          | 20     | NULL     | Quantity as string (before conversion to INT)
+unit_price_str                 | VARCHAR          | 20     | NULL     | Unit price as string (before conversion to DECIMAL)
+discount_amount_str            | VARCHAR          | 20     | NULL     | Discount amount as string (before conversion to DECIMAL)
+tax_amount_str                 | VARCHAR          | 20     | NULL     | Tax amount as string (before conversion to DECIMAL)
+shipping_cost_str              | VARCHAR          | 20     | NULL     | Shipping cost as string (before conversion to DECIMAL)
+customer_satisfaction_score_str| VARCHAR          | 10     | NULL     | Satisfaction score as string (before conversion to DECIMAL)
+review_rating_str              | VARCHAR          | 10     | NULL     | Review rating as string (before conversion to INT)
+delivery_status                | VARCHAR          | 20     | NULL     | Delivery status from source
+payment_method                 | VARCHAR          | 50     | NULL     | Payment method from source
+source_channel                 | VARCHAR          | 50     | NULL     | Source system channel
+source_region                  | VARCHAR          | 100    | NULL     | Source system region
+raw_json_data                  | JSON             |        | NULL     | Original JSON data from source
+load_date                      | TIMESTAMP        |        | NULL     | Timestamp when data was loaded to staging
+load_status                    | VARCHAR          | 20     | NULL     | Status of the load process (New, Validated, Error, Loaded)
+error_message                  | TEXT             |        | NULL     | Error message if any validation or transformation failed
+processed_flag                 | BOOLEAN          |        | NULL     | Flag indicating if the record has been processed
+
+
+TABLE: STG_WEB_EVENTS
+Description: Staging table for raw web event data during ETL process
+Purpose: Temporary storage for data validation and cleansing before loading to fact table
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+staging_id                     | INT              |        | NOT NULL | Surrogate key for staging (Primary Key)
+source_event_id                | VARCHAR          | 100    | NULL     | Event ID from source system
+source_user_id                 | VARCHAR          | 100    | NULL     | User ID from source system
+event_date_str                 | VARCHAR          | 20     | NULL     | Event date as string (before conversion to DATE)
+event_time_str                 | VARCHAR          | 20     | NULL     | Event time as string (before conversion to TIME)
+event_type                     | VARCHAR          | 100    | NULL     | Type of event from source
+page_url                       | VARCHAR          | 500    | NULL     | Page URL from source
+referrer_url                   | VARCHAR          | 500    | NULL     | Referring URL from source
+utm_source                     | VARCHAR          | 100    | NULL     | UTM source from source
+utm_medium                     | VARCHAR          | 100    | NULL     | UTM medium from source
+utm_campaign                   | VARCHAR          | 100    | NULL     | UTM campaign from source
+utm_term                       | VARCHAR          | 100    | NULL     | UTM term from source
+utm_content                    | VARCHAR          | 100    | NULL     | UTM content from source
+device_type                    | VARCHAR          | 50     | NULL     | Device type from source
+browser_name                   | VARCHAR          | 50     | NULL     | Browser name from source
+operating_system               | VARCHAR          | 50     | NULL     | Operating system from source
+page_view_duration_str         | VARCHAR          | 20     | NULL     | Page view duration as string (before conversion to INT)
+session_id                     | VARCHAR          | 100    | NULL     | Session ID from source
+session_duration_str           | VARCHAR          | 20     | NULL     | Session duration as string (before conversion to INT)
+raw_json_data                  | JSON             |        | NULL     | Original JSON data from source
+load_date                      | TIMESTAMP        |        | NULL     | Timestamp when data was loaded to staging
+load_status                    | VARCHAR          | 20     | NULL     | Status of the load process (New, Validated, Error, Loaded)
+error_message                  | TEXT             |        | NULL     | Error message if any validation or transformation failed
+processed_flag                 | BOOLEAN          |        | NULL     | Flag indicating if the record has been processed
+
+
+TABLE: STG_CUSTOMERS
+Description: Staging table for raw customer data during ETL process
+Purpose: Temporary storage for data validation and cleansing before loading to dimension table
+
+Column Name                    | Data Type        | Length | Nullable | Description
+------------------------------ | ---------------- | ------ | -------- | ------------------------------------------------------------
+staging_id                     | INT              |        | NOT NULL | Surrogate key for staging (Primary Key)
+source_customer_id             | VARCHAR          | 50     | NOT NULL | Customer ID from source system
+customer_name                  | VARCHAR          | 100    | NULL     | Customer name from source
+customer_segment               | VARCHAR          | 50     | NULL     | Customer segment from source
+gender                         | VARCHAR          | 10     | NULL     | Gender from source
+date_of_birth_str              | VARCHAR          | 20     | NULL     | Date of birth as string (before conversion to DATE)
+marital_status                 | VARCHAR          | 20     | NULL     | Marital status from source
+education_level                | VARCHAR          | 50     | NULL     | Education level from source
+occupation                     | VARCHAR          | 100    | NULL     | Occupation from source
+annual_income_str              | VARCHAR          | 20     | NULL     | Annual income as string (before conversion to DECIMAL)
+loyalty_member_str             | VARCHAR          | 10     | NULL     | Loyalty member flag as string (before conversion to BOOLEAN)
+registration_date_str          | VARCHAR          | 20     | NULL     | Registration date as string (before conversion to DATE)
+registration_channel           | VARCHAR          | 50     | NULL     | Registration channel from source
+country                        | VARCHAR          | 100    | NULL     | Country from source
+region                         | VARCHAR          | 100    | NULL     | Region from source
+city                           | VARCHAR          | 100    | NULL     | City from source
+postal_code                    | VARCHAR          | 20     | NULL     | Postal code from source
+preferred_communication_channel| VARCHAR          | 50     | NULL     | Preferred communication channel from source
+marketing_opt_in_str           | VARCHAR          | 10     | NULL     | Marketing opt-in flag as string (before conversion to BOOLEAN)
+raw_json_data                  | JSON             |        | NULL     | Original JSON data from source
+load_date                      | TIMESTAMP        |        | NULL     | Timestamp when data was loaded to staging
+load_status                    | VARCHAR          | 20     | NULL     | Status of the load process (New, Validated, Error, Loaded)
+error_message                  | TEXT             |        | NULL     | Error message if any validation or transformation failed
+processed_flag                 | BOOLEAN          |        | NULL     | Flag indicating if the record has been processed
