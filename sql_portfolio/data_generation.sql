@@ -13,7 +13,7 @@
 
 -- Generate dates for 3 years (2023-2025)
 WITH RECURSIVE date_series AS (
-    SELECT '2023-01-01'::DATE AS date_val
+    SELECT '2023-01-01'::TIMESTAMP AS date_val
     UNION ALL
     SELECT date_val + INTERVAL '1 day'
     FROM date_series
@@ -113,45 +113,45 @@ INSERT INTO dim_geography (
     latitude, longitude, timezone, country_code_iso2, continent_code,
     continent_name, market_classification
 ) VALUES 
-(1, 'USA001', 'United States of America', 'US-EAST', 'Northeast',
+(1, 'US1', 'United States of America', 'US-EAST', 'Northeast',
  'NY', 'New York', 'New York City', '10001',
- 40.7128, -74.0060, 'America/New_York', 'US', 'NA',
+ 40.7128, -74.0060, 'America/New_York', 'US', 'NAM',
  'North America', 'Premium'),
-(2, 'USA002', 'United States of America', 'US-WEST', 'West Coast',
+(2, 'US2', 'United States of America', 'US-WEST', 'West Coast',
  'CA', 'California', 'Los Angeles', '90001',
- 34.0522, -118.2437, 'America/Los_Angeles', 'US', 'NA',
+ 34.0522, -118.2437, 'America/Los_Angeles', 'US', 'NAM',
  'North America', 'Premium'),
-(3, 'CAN001', 'Canada', 'CA-ONT', 'Ontario',
+(3, 'CAN', 'Canada', 'CA-ONT', 'Ontario',
  'ON', 'Ontario', 'Toronto', 'M4W',
- 43.6532, -79.3832, 'America/Toronto', 'CA', 'NA',
+ 43.6532, -79.3832, 'America/Toronto', 'CA', 'NAM',
  'North America', 'Standard'),
-(4, 'GBR001', 'United Kingdom', 'GB-LON', 'London',
+(4, 'GBR', 'United Kingdom', 'GB-LON', 'London',
  'ENG', 'England', 'London', 'SW1',
- 51.5074, -0.1278, 'Europe/London', 'GB', 'EU',
+ 51.5074, -0.1278, 'Europe/London', 'GB', 'EUR',
  'Europe', 'Premium'),
-(5, 'AUS001', 'Australia', 'AUS-NSW', 'New South Wales',
+(5, 'AUS', 'Australia', 'AUS-NSW', 'New South Wales',
  'NSW', 'New South Wales', 'Sydney', '2000',
- -33.8688, 151.2093, 'Australia/Sydney', 'AU', 'OC',
+ -33.8688, 151.2093, 'Australia/Sydney', 'AU', 'OCE',
  'Oceania', 'Standard'),
-(6, 'IND001', 'India', 'IND-MH', 'Maharashtra',
+(6, 'IND', 'India', 'IND-MH', 'Maharashtra',
  'MH', 'Maharashtra', 'Mumbai', '400001',
- 19.0760, 72.8777, 'Asia/Kolkata', 'IN', 'AS',
+ 19.0760, 72.8777, 'Asia/Kolkata', 'IN', 'ASI',
  'Asia', 'Economy'),
-(7, 'BRA001', 'Brazil', 'BRA-SP', 'São Paulo',
+(7, 'BRA', 'Brazil', 'BRA-SP', 'São Paulo',
  'SP', 'São Paulo', 'São Paulo', '01000-000',
- -23.5505, -46.6333, 'America/Sao_Paulo', 'BR', 'SA',
+ -23.5505, -46.6333, 'America/Sao_Paulo', 'BR', 'SAM',
  'South America', 'Standard'),
-(8, 'ZAF001', 'South Africa', 'ZAF-GT', 'Gauteng',
+(8, 'ZAF', 'South Africa', 'ZAF-GT', 'Gauteng',
  'GT', 'Gauteng', 'Johannesburg', '2000',
- -26.2041, 28.0473, 'Africa/Johannesburg', 'ZA', 'AF',
+ -26.2041, 28.0473, 'Africa/Johannesburg', 'ZA', 'AFR',
  'Africa', 'Economy'),
-(9, 'SGP001', 'Singapore', 'SGP-CEN', 'Central',
+(9, 'SGP', 'Singapore', 'SGP-CEN', 'Central',
  'SGP', 'Singapore', 'Singapore', '018983',
- 1.3521, 103.8198, 'Asia/Singapore', 'SG', 'AS',
+ 1.3521, 103.8198, 'Asia/Singapore', 'SG', 'ASI',
  'Asia', 'Premium'),
-(10, 'JPN001', 'Japan', 'JPN-TYO', 'Tokyo',
+(10, 'JPN', 'Japan', 'JPN-TYO', 'Tokyo',
  '13', 'Tokyo', 'Tokyo', '100-0000',
- 35.6762, 139.6503, 'Asia/Tokyo', 'JP', 'AS',
+ 35.6762, 139.6503, 'Asia/Tokyo', 'JP', 'ASI',
  'Asia', 'Premium');
 
 -- ============================================================================
@@ -168,42 +168,42 @@ INSERT INTO dim_customer (
     marketing_opt_in, geography_key
 )
 SELECT
-    generate_series(1, 1000) AS customer_key,
-    generate_series(1001, 2000) AS customer_id,
-    'Customer ' || generate_series(1, 1000) AS customer_name,
+    s AS customer_key,
+    s + 1000 AS customer_id,
+    'Customer ' || s AS customer_name,
     CASE 
-        WHEN generate_series(1, 1000) <= 100 THEN 'Premium'
-        WHEN generate_series(1, 1000) <= 300 THEN 'Gold'
-        WHEN generate_series(1, 1000) <= 600 THEN 'Silver'
+        WHEN s <= 100 THEN 'Premium'
+        WHEN s <= 300 THEN 'Gold'
+        WHEN s <= 600 THEN 'Silver'
         ELSE 'Bronze'
     END AS customer_segment,
-    CASE (generate_series(1, 1000) % 3)
+    CASE (s % 3)
         WHEN 0 THEN 'M'
         WHEN 1 THEN 'F'
         ELSE 'O'
     END AS gender,
-    ('2023-01-01'::DATE - (generate_series(1, 1000) % 50 + 20) * 365) AS date_of_birth,
+    ('2023-01-01'::DATE - (s % 50 + 20) * 365) AS date_of_birth,
     CASE 
-        WHEN (generate_series(1, 1000) % 100) < 15 THEN 'Under 18'
-        WHEN (generate_series(1, 1000) % 100) < 25 THEN '18-25'
-        WHEN (generate_series(1, 1000) % 100) < 35 THEN '26-35'
-        WHEN (generate_series(1, 1000) % 100) < 50 THEN '36-50'
-        WHEN (generate_series(1, 1000) % 100) < 65 THEN '51-65'
+        WHEN (s % 100) < 15 THEN 'Under 18'
+        WHEN (s % 100) < 25 THEN '18-25'
+        WHEN (s % 100) < 35 THEN '26-35'
+        WHEN (s % 100) < 50 THEN '36-50'
+        WHEN (s % 100) < 65 THEN '51-65'
         ELSE 'Over 65'
     END AS age_group,
-    CASE (generate_series(1, 1000) % 4)
+    CASE (s % 4)
         WHEN 0 THEN 'Single'
         WHEN 1 THEN 'Married'
         WHEN 2 THEN 'Divorced'
         ELSE 'Widowed'
     END AS marital_status,
-    CASE (generate_series(1, 1000) % 4)
+    CASE (s % 4)
         WHEN 0 THEN 'High School'
         WHEN 1 THEN 'Bachelor'
         WHEN 2 THEN 'Master'
         ELSE 'PhD'
     END AS education_level,
-    CASE (generate_series(1, 1000) % 10)
+    CASE (s % 10)
         WHEN 0 THEN 'Engineer'
         WHEN 1 THEN 'Teacher'
         WHEN 2 THEN 'Doctor'
@@ -215,33 +215,33 @@ SELECT
         WHEN 8 THEN 'Analyst'
         ELSE 'Executive'
     END AS occupation,
-    (generate_series(1, 1000) % 100 + 20) * 2000 AS annual_income,
+    (s % 100 + 20) * 2000 AS annual_income,
     CASE 
-        WHEN (generate_series(1, 1000) % 10) < 8 THEN TRUE 
+        WHEN (s % 10) < 8 THEN TRUE 
         ELSE FALSE 
     END AS loyalty_member,
     CASE 
-        WHEN generate_series(1, 1000) <= 100 THEN 'Platinum'
-        WHEN generate_series(1, 1000) <= 300 THEN 'Gold'
-        WHEN generate_series(1, 1000) <= 600 THEN 'Silver'
+        WHEN s <= 100 THEN 'Platinum'
+        WHEN s <= 300 THEN 'Gold'
+        WHEN s <= 600 THEN 'Silver'
         ELSE 'Basic'
     END AS loyalty_tier,
-    ('2023-01-01'::DATE + (generate_series(1, 1000) % 1095)) AS registration_date,
-    CASE (generate_series(1, 1000) % 3)
+    ('2023-01-01'::DATE + (s % 1095)) AS registration_date,
+    CASE (s % 3)
         WHEN 0 THEN 'Web'
         WHEN 1 THEN 'Email'
         ELSE 'Store'
     END AS registration_channel,
-    ('2024-01-01'::DATE + (generate_series(1, 1000) % 365)) AS last_activity_date,
-    (generate_series(1, 1000) % 5000 + 100) AS total_lifetime_value,
-    (generate_series(1, 1000) % 50 + 1) AS total_orders_count,
-    (generate_series(1, 1000) % 500 + 50) AS average_order_value,
-    CASE (generate_series(1, 1000) % 3)
+    ('2024-01-01'::DATE + (s % 365)) AS last_activity_date,
+    (s % 5000 + 100) AS total_lifetime_value,
+    (s % 50 + 1) AS total_orders_count,
+    (s % 500 + 50) AS average_order_value,
+    CASE (s % 3)
         WHEN 0 THEN 'Email'
         WHEN 1 THEN 'SMS'
         ELSE 'Phone'
     END AS preferred_communication_channel,
-    CASE (generate_series(1, 1000) % 5)
+    CASE (s % 5)
         WHEN 0 THEN 'Downtown'
         WHEN 1 THEN 'Mall'
         WHEN 2 THEN 'Airport'
@@ -249,10 +249,11 @@ SELECT
         ELSE 'Suburban'
     END AS preferred_store_location,
     CASE 
-        WHEN (generate_series(1, 1000) % 10) < 7 THEN TRUE 
+        WHEN (s % 10) < 7 THEN TRUE 
         ELSE FALSE 
     END AS marketing_opt_in,
-    ((generate_series(1, 1000) - 1) % 10) + 1 AS geography_key;
+    ((s - 1) % 10) + 1 AS geography_key
+FROM generate_series(1, 1000) s;
 
 -- ============================================================================
 -- GENERATE PRODUCT DATA
@@ -266,9 +267,9 @@ INSERT INTO dim_product (
     supplier_id, supplier_name, weight_class, category_ranking
 )
 SELECT
-    generate_series(1, 500) AS product_key,
-    generate_series(5001, 5500) AS product_id,
-    CASE (generate_series(1, 500) % 10)
+    s AS product_key,
+    s + 5000 AS product_id,
+    CASE (s % 10)
         WHEN 0 THEN 'Smartphone'
         WHEN 1 THEN 'Laptop'
         WHEN 2 THEN 'Tablet'
@@ -280,21 +281,21 @@ SELECT
         WHEN 8 THEN 'TV'
         ELSE 'Speaker'
     END AS product_name,
-    'PRD' || LPAD(generate_series(1, 500)::TEXT, 4, '0') AS product_code,
-    CASE (generate_series(1, 500) % 5)
+    'PRD' || LPAD(s::TEXT, 4, '0') AS product_code,
+    CASE (s % 5)
         WHEN 0 THEN 'Electronics'
         WHEN 1 THEN 'Computers'
         WHEN 2 THEN 'Audio'
         WHEN 3 THEN 'Wearables'
         ELSE 'Entertainment'
     END AS product_category,
-    CASE (generate_series(1, 500) % 4)
+    CASE (s % 4)
         WHEN 0 THEN 'Mobile Devices'
         WHEN 1 THEN 'Desktops'
         WHEN 2 THEN 'Accessories'
         ELSE 'Gaming'
     END AS product_subcategory,
-    CASE (generate_series(1, 500) % 8)
+    CASE (s % 8)
         WHEN 0 THEN 'TechBrand'
         WHEN 1 THEN 'GlobalTech'
         WHEN 2 THEN 'InnovateInc'
@@ -304,18 +305,18 @@ SELECT
         WHEN 6 THEN 'Quantum'
         ELSE 'ElectroMax'
     END AS product_brand,
-    CASE (generate_series(1, 500) % 4)
+    CASE (s % 4)
         WHEN 0 THEN 'Premium'
         WHEN 1 THEN 'Standard'
         WHEN 2 THEN 'Budget'
         ELSE 'Deluxe'
     END AS product_line,
-    CASE (generate_series(1, 500) % 3)
+    CASE (s % 3)
         WHEN 0 THEN 'Small'
         WHEN 1 THEN 'Medium'
         ELSE 'Large'
     END AS product_size,
-    CASE (generate_series(1, 500) % 8)
+    CASE (s % 8)
         WHEN 0 THEN 'Black'
         WHEN 1 THEN 'White'
         WHEN 2 THEN 'Silver'
@@ -325,32 +326,33 @@ SELECT
         WHEN 6 THEN 'Green'
         ELSE 'Purple'
     END AS product_color,
-    CASE (generate_series(1, 500) % 5)
+    CASE (s % 5)
         WHEN 0 THEN 'Aluminum'
         WHEN 1 THEN 'Plastic'
         WHEN 2 THEN 'Metal'
         WHEN 3 THEN 'Silicon'
         ELSE 'Composite'
     END AS product_material,
-    (generate_series(1, 500) % 2000 + 50) AS base_price,
-    (generate_series(1, 500) % 1500 + 30) AS cost_price,
+    (s % 2000 + 50) AS base_price,
+    (s % 1500 + 30) AS cost_price,
     'Active' AS product_status,
     'High quality product in ' || 
-    CASE (generate_series(1, 500) % 5)
+    CASE (s % 5)
         WHEN 0 THEN 'Electronics'
         WHEN 1 THEN 'Computers'
         WHEN 2 THEN 'Audio'
         WHEN 3 THEN 'Wearables'
         ELSE 'Entertainment'
     END AS product_description,
-    (generate_series(1, 500) % 50) + 1 AS supplier_id,
-    'Supplier ' || ((generate_series(1, 500) % 50) + 1) AS supplier_name,
+    (s % 50) + 1 AS supplier_id,
+    'Supplier ' || ((s % 50) + 1) AS supplier_name,
     CASE 
-        WHEN (generate_series(1, 500) % 100) < 30 THEN 'Light'
-        WHEN (generate_series(1, 500) % 100) < 70 THEN 'Medium'
+        WHEN (s % 100) < 30 THEN 'Light'
+        WHEN (s % 100) < 70 THEN 'Medium'
         ELSE 'Heavy'
     END AS weight_class,
-    generate_series(1, 500) % 100 AS category_ranking;
+    s % 100 AS category_ranking
+FROM generate_series(1, 500) s;
 
 -- ============================================================================
 -- GENERATE MARKETING CHANNEL DATA
@@ -400,9 +402,9 @@ SELECT
     (random() * 5 + 1)::INT AS quantity_sold,
     (random() * 1000 + 10)::DECIMAL(10,2) AS unit_price,
     (random() * 800 + 5)::DECIMAL(10,2) AS unit_cost,
-    NULL AS total_revenue,
-    NULL AS total_cost,
-    NULL AS total_profit,
+    NULL::NUMERIC(12,2) AS total_revenue,
+    NULL::NUMERIC(12,2) AS total_cost,
+    NULL::NUMERIC(12,2) AS total_profit,
     (random() * 50)::DECIMAL(10,2) AS discount_amount,
     (random() * 20)::DECIMAL(10,2) AS tax_amount,
     (random() * 15)::DECIMAL(10,2) AS shipping_cost
@@ -434,7 +436,7 @@ SELECT
     total_cost, total_profit, discount_amount, tax_amount,
     shipping_cost,
     CASE 
-        WHEN total_revenue > 0 THEN (total_profit / total_revenue) * 100
+        WHEN total_revenue::NUMERIC > 0 THEN (total_profit::NUMERIC / total_revenue::NUMERIC) * 100
         ELSE 0
     END AS gross_margin,
     (random() * 4 + 1)::DECIMAL(3,2) AS customer_satisfaction_score,
