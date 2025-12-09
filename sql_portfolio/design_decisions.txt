@@ -1,0 +1,185 @@
+============================================================================
+E-COMMERCE ANALYTICS & CUSTOMER INTELLIGENCE PLATFORM
+DESIGN DECISIONS & NORMALIZATION RATIONALE
+============================================================================
+
+1. STAR SCHEMA ARCHITECTURE CHOICE
+----------------------------------
+Rationale: 
+- Selected star schema over snowflake schema for optimal query performance
+- Denormalized dimension tables reduce the number of joins required
+- Simplified query structure supports faster analytical processing
+- Better suited for BI tools and ad-hoc reporting
+- Trade-off: Slight data redundancy for significant performance gains
+
+Business Justification:
+- Enables fast aggregation queries for dashboards and reports
+- Supports common business questions: "Sales by region, product, time"
+- Facilitates complex analytical queries with window functions
+- Optimizes for read-heavy analytical workload patterns
+
+2. DIMENSION TABLE DESIGN DECISIONS
+-----------------------------------
+A. DIM_TIME Design:
+- Comprehensive time hierarchy supports all common time-based analysis
+- Includes both calendar and fiscal hierarchies to support different business needs
+- Pre-computed date-related attributes avoid complex date calculations in queries
+- Time grain: Daily with supporting time-of-day information
+
+B. DIM_CUSTOMER Design:
+- Demographic information enables customer segmentation analysis
+- Behavioral metrics (lifetime_value, order_count) improve query performance
+- Surrogate keys allow for handling changing customer information
+- SCD Type 2 approach supports historical customer attribute changes
+
+C. DIM_PRODUCT Design:
+- Detailed product attributes support product performance analysis
+- Price and cost information enables profitability calculations
+- Product hierarchy (category, subcategory, brand) enables drill-down analysis
+- Supplier information allows for procurement analysis
+
+D. DIM_GEOGRAPHY Design:
+- Multi-level geographic hierarchy supports various geographic analysis needs
+- Coordinates enable advanced spatial analysis
+- Market classification allows for targeted business strategies
+
+E. DIM_MARKETING_CHANNEL Design:
+- Channel attribution information supports marketing ROI analysis
+- Flexible structure accommodates different attribution models
+- Cost information enables channel profitability analysis
+
+3. FACT TABLE DESIGN DECISIONS
+------------------------------
+A. FACT_SALES_TRANSACTIONS:
+- Grain: Individual line items (not orders) for more granular analysis
+- Pre-calculated metrics (total_revenue, profit) improve query performance
+- Rich customer experience data (satisfaction, reviews) enables CX analysis
+- Business intelligence flags allow for efficient filtering in queries
+
+B. FACT_WEB_EVENTS:
+- Grain: Individual web events for comprehensive user behavior analysis
+- Flexible event_type allows for tracking various user interactions
+- Technical metadata (device, browser) supports UX optimization
+- Session information enables path analysis and conversion tracking
+
+C. FACT_CUSTOMER_INTERACTIONS:
+- Grain: Individual customer interactions for service level analysis
+- Satisfaction and sentiment scores enable customer experience metrics
+- Revenue impact tracking links service to business outcomes
+- Support process metrics support service efficiency analysis
+
+4. NORMALIZATION VS DENORMALIZATION BALANCE
+-------------------------------------------
+A. Dimension Tables:
+- Purposeful denormalization of related attributes to avoid joins
+- Customer demographics and behavior in one table for efficient customer queries
+- Product details including supplier information in single table
+- Time hierarchies flattened to single table
+
+B. Fact Tables:
+- Maintained normalized structure with foreign keys to dimensions
+- Pre-calculated measures to reduce computation during queries
+- Avoided computed columns that could slow query performance
+
+5. KEY DESIGN STRATEGY
+----------------------
+A. Surrogate Keys:
+- Used integer surrogate keys for all dimension tables
+- Improves join performance compared to natural keys
+- Handles changing business keys without breaking referential integrity
+- Reduces storage space and improves indexing efficiency
+
+B. Foreign Key Constraints:
+- Implemented to maintain data integrity
+- Cascading updates not implemented to prevent accidental data loss
+- All foreign keys are required to ensure valid dimensional references
+
+6. DATA TYPE SELECTION
+----------------------
+A. Numeric Types:
+- DECIMAL used for financial data to avoid floating-point precision issues
+- INT used for IDs and counts to optimize storage and performance
+- Appropriate precision selected for each numeric field
+
+B. Character Types:
+- VARCHAR used instead of CHAR to optimize storage for variable-length data
+- Appropriate length limits to balance flexibility and storage efficiency
+- TEXT used for large content fields like descriptions and reviews
+
+C. Date/Time Types:
+- DATE for pure date values
+- TIME for time-of-day values
+- TIMESTAMP for record creation/modification tracking
+
+7. INDEXING STRATEGY
+--------------------
+A. Dimension Tables:
+- Indexes on business keys for ETL lookups
+- Indexes on frequently filtered attributes (segments, categories)
+- Composite indexes on common query patterns
+
+B. Fact Tables:
+- Indexes on foreign key columns for join performance
+- Indexes on frequently queried business keys (transaction_date, order_id)
+- Composite indexes for multi-dimensional queries
+- Time-based partitioning possibility for large fact tables
+
+8. STAGING TABLE DESIGN
+-----------------------
+A. Raw Data Storage:
+- String columns preserve source data format during ingestion
+- JSON columns allow for flexible source data structures
+- Error handling columns track data quality issues
+
+B. ETL Process Support:
+- Load status tracking for ETL monitoring
+- Processed flags to support incremental loads
+- Error message fields for troubleshooting
+
+9. PERFORMANCE CONSIDERATIONS
+-----------------------------
+A. Query Optimization:
+- Designed schema for common analytical query patterns
+- Pre-computed metrics reduce real-time calculation needs
+- Strategic indexing on frequently queried columns
+
+B. Storage Efficiency:
+- Appropriate data types minimize storage requirements
+- Balanced normalization for optimal storage/query performance
+- Partitioning strategy considerations for large datasets
+
+10. SCALABILITY CONSIDERATIONS
+------------------------------
+A. Growth Accommodation:
+- Surrogate keys allow for large-scale data addition
+- Flexible design supports additional business requirements
+- Staging tables can handle variable source data structures
+
+B. Cloud Platform Readiness:
+- Schema design compatible with major cloud data platforms
+- Columnar storage optimization (for platforms like Snowflake, Databricks)
+- Partitioning and clustering key considerations
+
+11. DATA QUALITY MEASURES
+-------------------------
+A. Constraints:
+- Check constraints on critical business rules (review ratings, scores)
+- Not-null constraints on required fields
+- Foreign key constraints to maintain referential integrity
+
+B. Validation:
+- Appropriate field length limits prevent data overflow
+- Range constraints on numeric fields prevent invalid values
+- Business rule enforcement through constraints
+
+12. MAINTAINABILITY
+-------------------
+A. Documentation:
+- Comprehensive data dictionary for understanding
+- Clear naming conventions following snake_case standard
+- Descriptive column names that indicate purpose
+
+B. Extensibility:
+- Flexible design allows for new attributes without schema changes
+- Staging tables accommodate source system changes
+- Dimension tables can be extended without affecting fact tables
