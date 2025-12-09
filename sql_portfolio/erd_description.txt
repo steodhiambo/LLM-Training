@@ -1,0 +1,142 @@
+============================================================================
+E-COMMERCE ANALYTICS & CUSTOMER INTELLIGENCE PLATFORM
+ENTITY RELATIONSHIP DIAGRAM (ERD) DESCRIPTION
+============================================================================
+
+STAR SCHEMA ARCHITECTURE
+
+The database follows a classic star schema design, with a central fact table surrounded
+by dimension tables. This structure is optimized for analytical queries and reporting.
+
+CORE ENTITY RELATIONSHIPS:
+
+FACT_SALES_TRANSACTIONS (Central Fact Table)
+│
+├── ← dim_customer (Many-to-One)
+│     │
+│     ├── customer_key (Foreign Key) → customer_key (Primary Key)
+│     └── Links all sales transactions to customer information
+│
+├── ← dim_product (Many-to-One)
+│     │
+│     ├── product_key (Foreign Key) → product_key (Primary Key)
+│     └── Links all sales transactions to product information
+│
+├── ← dim_time (Many-to-One)
+│     │
+│     ├── time_key (Foreign Key) → time_key (Primary Key)
+│     └── Links all sales transactions to time/date information
+│
+├── ← dim_geography (Many-to-One)
+│     │
+│     ├── geography_key (Foreign Key) → geography_key (Primary Key)
+│     └── Links all sales transactions to geographic information
+│
+└── ← dim_marketing_channel (Many-to-One)
+      │
+      ├── marketing_channel_key (Foreign Key) → marketing_channel_key (Primary Key)
+      └── Links all sales transactions to marketing channel information
+
+
+FACT_WEB_EVENTS (Secondary Fact Table)
+│
+├── ← dim_customer (Many-to-One)
+│     │
+│     ├── customer_key (Foreign Key) → customer_key (Primary Key)
+│     └── Links web events to customer information
+│
+├── ← dim_time (Many-to-One)
+│     │
+│     ├── time_key (Foreign Key) → time_key (Primary Key)
+│     └── Links web events to time/date information
+│
+├── ← dim_product (Many-to-One)
+│     │
+│     ├── product_key (Foreign Key) → product_key (Primary Key)
+│     └── Links web events to product information (when applicable)
+│
+└── ← dim_marketing_channel (Many-to-One)
+      │
+      ├── marketing_channel_key (Foreign Key) → marketing_channel_key (Primary Key)
+      └── Links web events to marketing channel information
+
+
+FACT_CUSTOMER_INTERACTIONS (Tertiary Fact Table)
+│
+├── ← dim_customer (Many-to-One)
+│     │
+│     ├── customer_key (Foreign Key) → customer_key (Primary Key)
+│     └── Links customer interactions to customer information
+│
+├── ← dim_time (Many-to-One)
+│     │
+│     ├── time_key (Foreign Key) → time_key (Primary Key)
+│     └── Links customer interactions to time/date information
+│
+├── ← dim_product (Many-to-One)
+│     │
+│     ├── product_key (Foreign Key) → product_key (Primary Key)
+│     └── Links interactions to product information (when applicable)
+│
+└── ← dim_marketing_channel (Many-to-One)
+      │
+      ├── marketing_channel_key (Foreign Key) → marketing_channel_key (Primary Key)
+      └── Links interactions to marketing channel information
+
+
+VISUAL REPRESENTATION (Text-based):
+
+                    [dim_time]
+                        │
+                        │ time_key
+                        │
+    [dim_customer] ← customer_key → [fact_sales_transactions] ← product_key → [dim_product]
+         │                 │                    │                    │               │
+         │ geography_key   │ time_key           │ geography_key      │             │
+         │                 │                    │                    │             │
+         └─────────────────┼────────────────────┼────────────────────┼─────────────┘
+                           │                    │                    │
+                           └──────────────────────────────────────────┘
+                                            │
+                                      marketing_channel_key
+                                            │
+                                  [dim_marketing_channel]
+                                            │
+                                    geography_key
+                                            │
+                                  [dim_geography]
+
+
+RELATIONSHIP TYPES:
+
+1. One-to-Many Relationships:
+   - dim_customer → fact_sales_transactions (One customer can have many transactions)
+   - dim_product → fact_sales_transactions (One product can appear in many transactions)
+   - dim_time → fact_sales_transactions (One date can have many transactions)
+   - dim_geography → fact_sales_transactions (One location can have many transactions)
+   - dim_marketing_channel → fact_sales_transactions (One channel can drive many transactions)
+
+2. Many-to-One Relationships:
+   - fact_sales_transactions → dim_customer (Each transaction belongs to one customer)
+   - fact_sales_transactions → dim_product (Each transaction involves one product)
+   - fact_sales_transactions → dim_time (Each transaction occurs on one date)
+   - fact_sales_transactions → dim_geography (Each transaction happens in one location)
+   - fact_sales_transactions → dim_marketing_channel (Each transaction comes from one channel)
+
+REFERENTIAL INTEGRITY RULES:
+
+- FOREIGN KEY constraints ensure that references to dimension tables are valid
+- CASCADE options are NOT used to maintain data integrity during updates
+- NULL values are allowed in optional dimension references (e.g., marketing_channel_key in fact_sales_transactions)
+
+CARDINALITY INDICATORS:
+
+- Each fact record connects to exactly ONE record in each referenced dimension table
+- Each dimension record can connect to ZERO or MORE fact records
+- Missing dimension references are handled with UNKNOWN or DEFAULT dimension records
+
+INDEXING STRATEGY REFLECTION:
+
+- Foreign key columns in fact tables are indexed for join performance
+- Frequently queried dimension attributes are indexed
+- Composite indexes support multi-dimensional queries
